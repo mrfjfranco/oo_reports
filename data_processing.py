@@ -6,11 +6,13 @@ import warnings
 # Suppress warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 
-# Define input and output directories
-input_dir = 'input'
-output_dir = 'output'
+# Define input and output directories using dynamic paths
+base_dir = os.path.dirname(__file__)  # Get the directory of the current script
+input_dir = os.path.join(base_dir, 'input')
+output_dir = os.path.join(base_dir, 'output', 'oor')
 
-# Ensure the output directory exists
+# Ensure the input and output directories exist
+os.makedirs(input_dir, exist_ok=True)
 os.makedirs(output_dir, exist_ok=True)
 
 # Function to load and process CSV data
@@ -42,7 +44,7 @@ def save_to_excel(dataframe, filename):
     if os.path.exists(filepath):
         os.remove(filepath)
     dataframe.to_excel(filepath, index=False)
-    print(f"{filename} contains {len(dataframe)} orders")
+    return f"{filename} contains {len(dataframe)} orders"
 
 # Get current date for filenames
 current_date = datetime.now().strftime('%m-%d-%y')
@@ -144,15 +146,22 @@ def generate_report(channel_criteria_func, report_type):
     elif report_type == "All Orders":
         report_data = combined_criteria[combined_criteria['STATUS'].isin(['OPEN', 'BKO'])]
     else:
-        print("Invalid report type selected")
-        return
+        return "Invalid report type selected."
+        
 
     # Save the report to Excel
-    save_to_excel(report_data, f'{channel_criteria_func.__name__} {report_type} {current_date}.xlsx')
+    filename = f'{channel_criteria_func.__name__} {report_type} {current_date}.xlsx'
+    save_to_excel(report_data, filename)
+    
+    # Return the result string for the display
+    return f"{filename} contains {len(report_data)} orders"
 
 # Generate all reports for all channels
 def generate_all_reports(report_type):
-    generate_report(USAC, report_type)
-    generate_report(WEX, report_type)
-    generate_report(DMEC, report_type)
-    generate_report(CLFYP, report_type)
+    result_usac = generate_report(USAC, report_type)
+    result_wex =generate_report(WEX, report_type)
+    result_dmec =generate_report(DMEC, report_type)
+    result_clfyp =generate_report(CLFYP, report_type)
+    
+    # Combine all results and return
+    return "\n".join([result_usac, result_wex, result_dmec, result_clfyp])

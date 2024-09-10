@@ -1,14 +1,17 @@
-# gui_oo_menu.py
-
 import tkinter as tk
 from tkinter import messagebox
 import subprocess
 import os
 import data_processing
 
+
 # Define the path for the input folder
-input_folder = os.path.join(os.path.dirname(__file__), 'input')
-output_folder = os.path.join(os.path.dirname(__file__), 'output', 'oor')
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+input_folder = os.path.join(base_dir, 'input', 'oor')
+output_folder = os.path.join(base_dir, 'output', 'oor')
+print(f"Base directory: {base_dir}")
+print(f"Input folder: {input_folder}")
+print(f"Output folder: {output_folder}")
 
 # Function to open the input folder in file explorer
 def open_input_folder():
@@ -30,10 +33,110 @@ def open_output_folder():
     elif os.name == 'posix':  # For macOS or Linux
         subprocess.run(['open', output_folder]) if os.uname().sysname == 'Darwin' else subprocess.run(['xdg-open', output_folder])
 
+
+# Function to show a pop-up with the report generation result
+def show_result_popup(result):
+    # Create a new pop-up window
+    result_popup = tk.Toplevel()
+    result_popup.title("Report Generation Result")
+    
+    # Display the result text
+    result_label = tk.Label(result_popup, text=result, padx=10, pady=10, justify="left")
+    result_label.pack()
+
+    # Button to open the output folder
+    open_folder_button = tk.Button(result_popup, text="Open Reports Folder", command=open_output_folder)
+    open_folder_button.pack(pady=5)
+
+    # OK button to close the pop-up
+    ok_button = tk.Button(result_popup, text="OK", command=result_popup.destroy)
+    ok_button.pack(pady=10)
+
+
+# Function to handle report generation for USAC
+def generate_usac():
+    result = ""
+    if open_orders_var.get():
+        result += data_processing.generate_report(data_processing.USAC, "Open Orders") + "\n"
+    if bko_var.get():
+        result += data_processing.generate_report(data_processing.USAC, "BKO") + "\n"
+    if all_orders_var.get():
+        result += data_processing.generate_report(data_processing.USAC, "All Orders") + "\n"
+    
+    if result.strip():
+        show_result_popup(result)
+    else:
+        show_result_popup("USAC report generation failed.")
+
+
+# Function to handle report generation for WEX
+def generate_wex():
+    result = ""
+    if open_orders_var.get():
+        result += data_processing.generate_report(data_processing.WEX, "Open Orders") + "\n"
+    if bko_var.get():
+        result += data_processing.generate_report(data_processing.WEX, "BKO") + "\n"
+    if all_orders_var.get():
+        result += data_processing.generate_report(data_processing.WEX, "All Orders") + "\n"
+    
+    if result.strip():
+        show_result_popup(result)
+    else:
+        show_result_popup("WEX report generation failed.")
+
+
+# Function to handle report generation for DMEC
+def generate_dmec():
+    result = ""
+    if open_orders_var.get():
+        result += data_processing.generate_report(data_processing.DMEC, "Open Orders") + "\n"
+    if bko_var.get():
+        result += data_processing.generate_report(data_processing.DMEC, "BKO") + "\n"
+    if all_orders_var.get():
+        result += data_processing.generate_report(data_processing.DMEC, "All Orders") + "\n"
+    
+    if result.strip():
+        show_result_popup(result)
+    else:
+        show_result_popup("DMEC report generation failed.")
+
+
+# Function to handle report generation for CLFYP
+def generate_clfyp():
+    result = ""
+    if open_orders_var.get():
+        result += data_processing.generate_report(data_processing.CLFYP, "Open Orders") + "\n"
+    if bko_var.get():
+        result += data_processing.generate_report(data_processing.CLFYP, "BKO") + "\n"
+    if all_orders_var.get():
+        result += data_processing.generate_report(data_processing.CLFYP, "All Orders") + "\n"
+    
+    if result.strip():
+        show_result_popup(result)
+    else:
+        show_result_popup("CLFYP report generation failed.")
+
+
+# Function to handle generation of all reports
+def generate_all():
+    result = ""
+    if open_orders_var.get():
+        result += data_processing.generate_all_reports("Open Orders") + "\n"
+    if bko_var.get():
+        result += data_processing.generate_all_reports("BKO") + "\n"
+    if all_orders_var.get():
+        result += data_processing.generate_all_reports("All Orders") + "\n"
+    
+    if result.strip():
+        show_result_popup(result)
+    else:
+        show_result_popup("Report generation failed for all reports.")
+
+
 # Create main GUI window
 root = tk.Tk()
 root.title("Open Orders Report Generator")
-root.geometry("300x450+100+100")  # Set a fixed window size to keep the same width
+root.geometry("300x500+100+100")  # Adjusted window size
 
 # Function to exit the program
 def exit_program():
@@ -51,41 +154,16 @@ setup_menu.add_command(label="View Output Folder", command=open_output_folder)
 setup_menu.add_command(label='Exit', command=exit_program)
 
 
-# Define the selected report type for the reports
-report_type = tk.StringVar(value="Open Orders")
+# Define the variables for each report type
+open_orders_var = tk.BooleanVar(value=False)
+bko_var = tk.BooleanVar(value=False)
+all_orders_var = tk.BooleanVar(value=False)
 
-# Function to handle report generation for USAC
-def generate_usac():
-    data_processing.generate_report(data_processing.USAC, report_type.get())
-    messagebox.showinfo("Success", f"USAC {report_type.get()} report generated!")
-
-# Function to handle report generation for WEX
-def generate_wex():
-    data_processing.generate_report(data_processing.WEX, report_type.get())
-    messagebox.showinfo("Success", f"WEX {report_type.get()} report generated!")
-
-# Function to handle report generation for DMEC
-def generate_dmec():
-    data_processing.generate_report(data_processing.DMEC, report_type.get())
-    messagebox.showinfo("Success", f"DMEC {report_type.get()} report generated!")
-
-# Function to handle report generation for CLFYP
-def generate_clfyp():
-    data_processing.generate_report(data_processing.CLFYP, report_type.get())
-    messagebox.showinfo("Success", f"CLFYP {report_type.get()} report generated!")
-
-# Function to handle generation of all reports
-def generate_all():
-    data_processing.generate_all_reports(report_type.get())
-    messagebox.showinfo("Success", f"All {report_type.get()} reports generated!")
-
-
-
-# Create radio buttons to allow the user to select the report type
-tk.Label(root, text="Select Report Type:").pack(pady=10)
-tk.Radiobutton(root, text="Open Orders", variable=report_type, value="Open Orders").pack(anchor="w", padx=30)
-tk.Radiobutton(root, text="BKO", variable=report_type, value="BKO").pack(anchor="w", padx=30)
-tk.Radiobutton(root, text="All Orders", variable=report_type, value="All Orders").pack(anchor="w", padx=30)
+# Create checkboxes to allow the user to select multiple report types
+tk.Label(root, text="Select Report Type(s):").pack(pady=10)
+tk.Checkbutton(root, text="Open Orders", variable=open_orders_var).pack(anchor="w", padx=30)
+tk.Checkbutton(root, text="BKO", variable=bko_var).pack(anchor="w", padx=30)
+tk.Checkbutton(root, text="All Orders", variable=all_orders_var).pack(anchor="w", padx=30)
 
 # Label to describe report generation section
 tk.Label(root, text="Generate reports for:").pack(pady=10)

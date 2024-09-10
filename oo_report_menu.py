@@ -33,7 +33,7 @@ def open_output_folder():
 # Create main GUI window
 root = tk.Tk()
 root.title("Open Orders Report Generator")
-root.geometry("300x450")  # Set a fixed window size to keep the same width
+root.geometry("300x450+100+100")  # Set a fixed window size to keep the same width
 
 # Function to exit the program
 def exit_program():
@@ -91,16 +91,16 @@ tk.Radiobutton(root, text="All Orders", variable=report_type, value="All Orders"
 tk.Label(root, text="Generate reports for:").pack(pady=10)
 
 # Create buttons for generating reports for each channel
-tk.Button(root, text="USAC", command=generate_usac, width=20).pack(pady=5)
-tk.Button(root, text="WEX", command=generate_wex, width=20).pack(pady=5)
-tk.Button(root, text="DMEC", command=generate_dmec, width=20).pack(pady=5)
-tk.Button(root, text="CLFYP", command=generate_clfyp, width=20).pack(pady=5)
+tk.Button(root, text="USAC", command=generate_usac, width=10).pack(pady=5)
+tk.Button(root, text="WEX", command=generate_wex, width=10).pack(pady=5)
+tk.Button(root, text="DMEC", command=generate_dmec, width=10).pack(pady=5)
+tk.Button(root, text="CLFYP", command=generate_clfyp, width=10).pack(pady=5)
 
 # Create button for generating all reports at once
-tk.Button(root, text="All", command=generate_all, width=20, fg="red").pack(pady=10)
+tk.Button(root, text="All", command=generate_all, width=10, fg="blue").pack(pady=15)
 
 # Create an Exit button
-tk.Button(root, text="Cancel", command=exit_program, width=20, fg="blue").pack(pady=15)
+tk.Button(root, text="Cancel", command=exit_program, fg="red").pack(pady=15)
 
 # Add copyright label at the bottom
 copyright_label = tk.Label(root, text="© 2024 @mr.fjfranco - All rights reserved.", font=("Arial", 8))

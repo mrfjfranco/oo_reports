@@ -7,9 +7,12 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 
 # Define input and output directories using dynamic paths
-base_dir = os.path.dirname(__file__)  # Get the directory of the current script
-input_dir = os.path.join(base_dir, 'input')
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+input_dir = os.path.join(base_dir, 'input', 'oor')
 output_dir = os.path.join(base_dir, 'output', 'oor')
+print(f"Base directory: {base_dir}")
+print(f"Input folder: {input_dir}")
+print(f"Output folder: {output_dir}")
 
 # Ensure the input and output directories exist
 os.makedirs(input_dir, exist_ok=True)

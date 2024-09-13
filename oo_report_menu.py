@@ -136,7 +136,7 @@ def generate_all():
 # Create main GUI window
 root = tk.Tk()
 root.title("Open Orders Report Generator")
-root.geometry("300x500+100+100")  # Adjusted window size
+root.geometry("300x450+100+100")  # Adjusted window size
 
 # Function to exit the program
 def exit_program():
